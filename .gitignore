@@ -1,0 +1,7 @@
+__pycache__
+stations_tmp
+*.csv
+.vscode
+build
+dist
+lib
