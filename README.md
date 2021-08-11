@@ -1,20 +1,20 @@
-# KNMI hourly weather data API
+# KNMI weather data API
 
-This project is a simple API over the historical hourly weather data information updated daily by KNMI ranging from 2001 to 2021 (https://www.knmi.nl/nederland-nu/klimatologie/uurgegevens).
+This project is a simple API over the historical weather data information updated daily by KNMI.
 
 
 ## Installation
 
-Use the package manager [pip](https://pypi.org/project/KNMIuurgegevens/) to install.
+Use the package manager [pip](https://pypi.org/project/KNMIdata/) to install.
 
 ```bash
-pip install KNMIuurgegevens
+pip install KNMIdata
 ```
 
 ## Usage
 
 ```python
-from KNMIuurgegevens import KNMI
+from KNMIData import KNMI
 
 # When download set to true it will remove and download files. 
 knmi = KNMI(data_type='hourly', download=True)

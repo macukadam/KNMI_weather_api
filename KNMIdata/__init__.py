@@ -1,3 +1,3 @@
-from KNMIgegevens.KNMI import KNMI
+from KNMIdata.KNMI import KNMI
 
 name = 'KNMIgegevens'
