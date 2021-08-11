@@ -14,10 +14,10 @@ pip install KNMIuurgegevens
 ## Usage
 
 ```python
-from KNMIuurgegevens.KNMI import KNMI
+from KNMIuurgegevens import KNMI
 
-# When download set to true it will remove and download files.
-knmi = KNMI(download=True)
+# When download set to true it will remove and download files. 
+knmi = KNMI(data_type='hourly', download=True)
 
 # If hourly data files are already downloaded
 knmi = KNMI()
