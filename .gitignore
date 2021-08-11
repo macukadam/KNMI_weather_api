@@ -7,3 +7,5 @@ build
 dist
 lib
 KNMIuurgegevens.egg-info
+eleena_data.py
+setup.py
