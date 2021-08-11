@@ -12,7 +12,7 @@ import os
 import knmi
 import asyncio
 import sys
-from KNMI_data_fetch import KNMIDataLoader
+from .KNMI_data_fetch import KNMIDataLoader
 from geopy.distance import geodesic
 from geopy.geocoders import Nominatim
 

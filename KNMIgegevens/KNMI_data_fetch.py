@@ -17,7 +17,7 @@ import shutil
 import traceback
 from io import BytesIO
 from zipfile import ZipFile
-from loading_screen import LoadingScreen
+from .loading_screen import LoadingScreen
 
 
 class KNMIDataLoader():
