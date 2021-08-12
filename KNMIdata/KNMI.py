@@ -2,7 +2,7 @@ __author__ = "Ugurcan Akpulat"
 __copyright__ = "Copyright 2021, Eleena Software"
 __credits__ = [""]
 __license__ = "MIT"
-__version__ = "1.0.0"
+__version__ = "1.0.1"
 __maintainer__ = "Ugurcan Akpulat"
 __email__ = "ugurcan.akpulat@gmail.com"
 __status__ = "Production"
@@ -25,12 +25,12 @@ class KNMI():
     def __init__(self, data_type='hourly', download=False):
         dir_name = 'station_uur_temp'
         if data_type == 'hourly':
-            loader = KNMIDataLoader(1, 1000, 'hourly', dir_name)
+            loader = KNMIDataLoader(1, 1000, 'hourly', dir_name, download)
         elif data_type == 'daily':
             dir_name = 'station_dag_temp'
-            loader = KNMIDataLoader(1, 1000, 'daily', dir_name)
+            loader = KNMIDataLoader(1, 1000, 'daily', dir_name, download)
         else:
-            raise ValueError('Wrong parameter for data_type. Use hourly or daily')
+            raise ValueError('Use hourly or daily for data_type')
 
         if download:
             asyncio.run(loader.start(data_type))
@@ -62,7 +62,7 @@ class KNMI():
         return self
 
     def __next__(self):
-        if self.n <= len(self):
+        if self.n < len(self):
             result = self[self.__downloaded_station_numbers[self.n]]
             self.n += 1
             return result
@@ -74,12 +74,6 @@ class KNMI():
         dtypes = {headers: float for headers in headers}
         dtypes['YYYYMMDD'] = str
         return dtypes
-
-    def __get_coordinates_from_postcode_NL(self, postalcode: str, cnt='NL'):
-        geolocator = Nominatim(user_agent="knmi-app")
-        location = geolocator.geocode(query={'postalcode': postalcode,
-                                             'country': cnt})
-        return location
 
     def __find_closest_st(self, lat: int, lng: int) -> knmi.metadata.Station:
         stations = [knmi.stations.get(station)
@@ -94,8 +88,28 @@ class KNMI():
                 closestStation = station
         return closestStation
 
-    def find_df(self, postcode: str) -> pd.DataFrame:
+    def get_coordinates_from_postcode_NL(self, postalcode: str, cnt='NL'):
+        geolocator = Nominatim(user_agent="knmi-app")
+        location = geolocator.geocode(query={'postalcode': postalcode,
+                                             'country': cnt})
+        return location
+
+    def find_closest_station_number(self, postcode: str) -> int:
         """This method gets the df of the closest station"""
-        cord = self.__get_coordinates_from_postcode_NL(postcode)
+        cord = self.get_coordinates_from_postcode_NL(postcode)
         station = self.__find_closest_st(cord.latitude, cord.longitude)
-        return self.__stations[station.number]
+        return station.number
+
+    def find_df(self, postcode: str) -> pd.DataFrame:
+        station_number = self.find_closest_station_number(postcode)
+        return self.__stations[station_number]
+
+    def get_all_info(self):
+        df = None
+        for k in self:
+            if df is None:
+                df = k
+            else:
+                df.append(k)
+
+        return k

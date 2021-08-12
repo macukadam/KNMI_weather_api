@@ -4,7 +4,7 @@ __author__ = "Ugurcan Akpulat"
 __copyright__ = "Copyright 2021, Eleena Software"
 __credits__ = [""]
 __license__ = "MIT"
-__version__ = "1.0.0"
+__version__ = "1.0.1"
 __maintainer__ = "Ugurcan Akpulat"
 __email__ = "ugurcan.akpulat@gmail.com"
 __status__ = "Production"
@@ -25,11 +25,12 @@ class KNMIDataLoader():
         from KNMI klimatologie page and saves it to csv files at
         given path. Those files are updated daily.
     """
-    def __init__(self, sbegin: int, send: int, data_type: str, dir_name=None):
+    def __init__(self, sbegin: int, send: int, data_type: str, dir_name=None,
+                 download=False):
         self.__type = data_type
         self.__sbegin = sbegin
         self.__send = send
- 
+
         if not dir_name:
             if self.__type == 'hourly':
                 dir_name = 'station_uur_temp'
@@ -39,9 +40,11 @@ class KNMIDataLoader():
         _path = os.path.join(os.getcwd(), dir_name)
         self.__output_path = _path
 
-        if os.path.exists(_path):
+        if os.path.exists(_path) and download:
             shutil.rmtree(_path)
-        os.makedirs(_path)
+
+        if not os.path.exists(_path):
+            os.makedirs(_path)
 
     def manupulate_text(self, zip: ZipFile, contained_file: str,
                         file_path: str) -> str:
