@@ -4,7 +4,7 @@ __author__ = "Ugurcan Akpulat"
 __copyright__ = "Copyright 2021, Eleena Software"
 __credits__ = [""]
 __license__ = "MIT"
-__version__ = "1.0.1"
+__version__ = "1.0.2"
 __maintainer__ = "Ugurcan Akpulat"
 __email__ = "ugurcan.akpulat@gmail.com"
 __status__ = "Production"
@@ -46,10 +46,13 @@ class KNMIDataLoader():
         if not os.path.exists(_path):
             os.makedirs(_path)
 
-    def manupulate_text(self, zip: ZipFile, contained_file: str,
+    def manipulate_text(self, zip: ZipFile, contained_file: str,
                         file_path: str) -> str:
         text = zip.open(contained_file).read().decode()
         text = text[text.index('STN,'):].replace(" ", "")
+        header = "TXH,PG,PX,PXH,PN,PNH,VVN,VVNH,VVX,VVXH,NG,UG,UX,UXH,UN,UNH"
+        replace = "TXH,PG,PX,PXH,PN,PNH,VVN,VVNH,VVX,VVXH,NG,UG,UX,UXH,UN,UNH,"
+        text = text.replace(header, replace)
         text = text.replace("\n,", ",", 1)
         if os.path.exists(file_path):
             text = text[text.find('\n')+3:]
@@ -60,7 +63,7 @@ class KNMIDataLoader():
             file = f'{i}'
             for contained_file in zip.namelist():
                 file_path = (os.path.join(self.__output_path, file + ".csv"))
-                text = self.manupulate_text(zip, contained_file, file_path)
+                text = self.manipulate_text(zip, contained_file, file_path)
                 with open(file_path, "a") as output:
                     output.write(text)
             return True

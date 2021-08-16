@@ -2,7 +2,7 @@ __author__ = "Ugurcan Akpulat"
 __copyright__ = "Copyright 2021, Eleena Software"
 __credits__ = [""]
 __license__ = "MIT"
-__version__ = "1.0.1"
+__version__ = "1.0.2"
 __maintainer__ = "Ugurcan Akpulat"
 __email__ = "ugurcan.akpulat@gmail.com"
 __status__ = "Production"
@@ -40,6 +40,7 @@ class KNMI():
         self.__downloaded_station_numbers = [int(f.split('.')[0]) for f in
                                              os.listdir(self.__path)
                                              if f.endswith('.csv')]
+        self.__relevant_station_numbers = []
 
         for nmbr in self.__downloaded_station_numbers:
             file_path = os.path.join(self.__path, str(nmbr) + '.csv')
@@ -95,7 +96,6 @@ class KNMI():
         return location
 
     def find_closest_station_number(self, postcode: str) -> int:
-        """This method gets the df of the closest station"""
         cord = self.get_coordinates_from_postcode_NL(postcode)
         station = self.__find_closest_st(cord.latitude, cord.longitude)
         return station.number
@@ -111,5 +111,23 @@ class KNMI():
                 df = k
             else:
                 df.append(k)
+        return df
 
-        return k
+    def eleena_daily_get(self):
+        df = None
+        for k in self:
+            try:
+                if df is None:
+                    df = k[['STN', 'YYYYMMDD', 'TG', 'SQ', 'DR', 'NG', 'Q']]
+                else:
+                    df = df.append(k[['STN', 'YYYYMMDD', 'TG', 'SQ', 'DR', 'NG', 'Q']])
+
+            except Exception:
+                continue
+
+        self.__relevant_station_numbers.append(df['STN'][0])
+        return df
+
+    def find_closest_station_number_relevant(self, lat, long):
+        station = self.__find_closest_st(lat, long)
+        return station.number
